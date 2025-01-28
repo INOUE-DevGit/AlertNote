@@ -1,25 +1,34 @@
-﻿namespace AlertNote
+﻿using Plugin.LocalNotification;
+
+namespace AlertNote
 {
     public partial class MainPage : ContentPage
     {
-        int count = 0;
-
         public MainPage()
         {
             InitializeComponent();
         }
 
-        private void OnCounterClicked(object sender, EventArgs e)
+        private void OnSetNotificationClicked(object sender, EventArgs e)
         {
-            count++;
+            var memoText = MemoEntry.Text;
+            if (!string.IsNullOrWhiteSpace(memoText))
+            {
+                var notification = new NotificationRequest
+                {
+                    NotificationId = 100,
+                    Title = "AlertNote",
+                    Subtitle = "Notification",
+                    Description = memoText,
+                    BadgeNumber = 1,
+                    Schedule = new NotificationRequestSchedule
+                    {
+                        NotifyTime = DateTime.Now.AddSeconds(5) // 5秒後に通知
+                    }
+                };
 
-            if (count == 1)
-                CounterBtn.Text = $"Clicked {count} time";
-            else
-                CounterBtn.Text = $"Clicked {count} times";
-
-            SemanticScreenReader.Announce(CounterBtn.Text);
+                LocalNotificationCenter.Current.Show(notification);
+            }
         }
     }
-
 }
